@@ -1,0 +1,43 @@
+.sidebar {
+  width: 25%;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  gap: 10px;
+  transition: background 0.2s;
+}
+
+.sidebar-user:hover {
+  background-color: #e6e6e6;
+}
+
+.sidebar-user.selected {
+  background-color: #d0e7ff;
+}
+
+.user-icon {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
