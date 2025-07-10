@@ -1,5 +1,51 @@
+/* Reset */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: inherit;
+}
+
+/* App Container */
 .app-container {
   display: flex;
   height: 100vh;
   font-family: sans-serif;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar-wrapper {
+  flex-shrink: 0;
+}
+
+/* Divider between sidebar and chat */
+.divider {
+  width: 1px;
+  background-color: #ccc;
+}
+
+/* Chat */
+.chat-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-placeholder {
+  font-size: 24px;
+  margin: auto;
+  color: #999;
+}
+
+/* Themes */
+.light-theme {
+  background-color: #f9f9f9;
+  color: black;
+}
+
+.dark-theme {
+  background-color: #121212;
+  color: white;
 }
