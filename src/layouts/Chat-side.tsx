@@ -1,9 +1,7 @@
-// File: frontend/src/layouts/Chat-side.tsx
 import React from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa';
-
+import type { UserType } from '../App';
 import './Sidebar.css';
-import { type  UserType } from '../App';
 
 interface Props {
   users: UserType[];
@@ -16,34 +14,30 @@ interface Props {
 const Sidebar: React.FC<Props> = ({ users, selectedUser, onSelectUser, theme, setTheme }) => {
   return (
     <div className={`sidebar ${theme}`}>
-      <h2 className="sidebar-title">Chats</h2>
-
-      <div className="theme-toggle">
+      <div className="sidebar-header">
+        <h2 className="sidebar-title">Chats</h2>
         <button
-    onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-    className="theme-icon-btn"
-      style={{ color: theme === 'light' ? '#333' : '#fff' }}
-
-    
-  >
-    {theme === 'light' ? <FaMoon size={20} /> : <FaSun size={20} />}
-  </button>
+          className="theme-icon-btn"
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        >
+          {theme === 'light' ? <FaMoon /> : <FaSun />}
+        </button>
       </div>
 
-      {users.map((user) => (
-        <div
-          key={user.id}
-          className={`sidebar-user ${selectedUser?.id === user.id ? 'selected' : ''}`}
-          onClick={() => onSelectUser(user)}
-        >
-          <div className="user-icon">{user.name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()}</div>
-          <span>{user.name}</span>
-        </div>
-      ))}
+      <div className="sidebar-users">
+        {users.map(user => (
+          <div
+            key={user.id}
+            className={`sidebar-user ${selectedUser?.id === user.id ? 'selected' : ''}`}
+            onClick={() => onSelectUser(user)}
+          >
+            <div className="user-icon">
+              {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+            </div>
+            <span>{user.name}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,8 +1,7 @@
-// File: frontend/src/components/ChatWindow.tsx
 import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import { type UserType } from '../App';
-import './ChatPage.css';
+import '../index.css';
 import { PhoneCall, Video, MoreVertical, Edit2, Trash2 } from 'lucide-react';
 
 const socket = io('http://localhost:3001');
@@ -26,11 +25,13 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
   const [dropdownIndex, setDropdownIndex] = useState<string | null>(null);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const chatBodyRef = useRef<HTMLDivElement | null>(null);
 
+  // Receive messages
   useEffect(() => {
     const handleReceive = (data: ChatMessage) => {
       const partner = data.sender === currentUser.name ? data.receiver : data.sender;
-      setChatHistory((prev) => ({
+      setChatHistory(prev => ({
         ...prev,
         [partner]: [...(prev[partner] || []), data],
       }));
@@ -44,6 +45,7 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
     };
   }, [currentUser]);
 
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -53,6 +55,13 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Scroll to bottom when chat updates
+  useEffect(() => {
+    if (chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+    }
+  }, [chatHistory, selectedUser]);
 
   const chat = chatHistory[selectedUser.name] || [];
 
@@ -69,10 +78,10 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
     if (editIndex !== null) {
       const updated = [...chat];
       updated[editIndex] = msg;
-      setChatHistory((prev) => ({ ...prev, [selectedUser.name]: updated }));
+      setChatHistory(prev => ({ ...prev, [selectedUser.name]: updated }));
     } else {
       socket.emit('send_message', { ...msg, room: selectedUser.id });
-      setChatHistory((prev) => ({
+      setChatHistory(prev => ({
         ...prev,
         [selectedUser.name]: [...(prev[selectedUser.name] || []), msg],
       }));
@@ -91,7 +100,7 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
   const handleDelete = (index: number) => {
     const updated = [...chat];
     updated.splice(index, 1);
-    setChatHistory((prev) => ({ ...prev, [selectedUser.name]: updated }));
+    setChatHistory(prev => ({ ...prev, [selectedUser.name]: updated }));
     setDropdownIndex(null);
   };
 
@@ -103,7 +112,7 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
           <div className="chat-avatar">
             {selectedUser.name
               .split(' ')
-              .map((w) => w[0])
+              .map(w => w[0])
               .join('')
               .toUpperCase()}
           </div>
@@ -113,13 +122,12 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
         <div className="header-right">
           <PhoneCall className="call-icon" onClick={() => alert('Voice Call')} />
           <Video className="video-icon" onClick={() => alert('Video Call')} />
-               <MoreVertical className="chat-menu" onClick={() => alert('More options')} /> 
-
+          <MoreVertical className="chat-menu" onClick={() => alert('More options')} />
         </div>
       </div>
 
       {/* Body */}
-      <div className="chat-body">
+      <div className="chat-body" ref={chatBodyRef}>
         {chat.map((msg, idx) => (
           <div
             key={msg.id}
@@ -135,8 +143,7 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
                   <MoreVertical
                     size={18}
                     className="msg-dots"
-
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       setDropdownIndex(dropdownIndex === msg.id ? null : msg.id);
                     }}
@@ -156,6 +163,13 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
             </div>
           </div>
         ))}
+
+        {/* Typing Indicator (Example) */}
+        {/* <div className="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div> */}
       </div>
 
       {/* Input */}
@@ -164,8 +178,8 @@ const ChatWindow: React.FC<Props> = ({ selectedUser, currentUser, theme }) => {
           type="text"
           placeholder="Type your message..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+          onChange={e => setMessage(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && sendMessage()}
         />
         <button onClick={sendMessage}>{editIndex !== null ? 'Update' : 'Send'}</button>
       </div>
